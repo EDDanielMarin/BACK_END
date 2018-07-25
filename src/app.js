@@ -3,7 +3,7 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 
 const app = express();
-mongoose.connect('mongodb://localhost/facturacion')
+mongoose.connect('mongodb://localhost/Back_end')
 .then(db => console.log('BD esta conectada'))
 .catch(err => console.error(err));
 //settings
@@ -21,8 +21,15 @@ app.use(function(req, res, next) {
 
 //Routes
 app.use('/clientes', require('./routes/clientes'))
-app.use('/facturas', require('./routes/facturas'))
-app.use('/detalles', require('./routes/detalles'))
+app.use('/usuarios', require('./routes/usuarios'))
+app.use('/lecturaUsuarios', require('./routes/lecturaUsuarios'))
+app.use('/notificacionUsuarios', require('./routes/notificacionUsuarios'))
+app.use('/parametroConfigs', require('./routes/parametroConfigs'))
+app.use('/lecturas', require('./routes/lecturas'))
+app.use('/sensores', require('./routes/sensores'))
+app.use('/tipoNotificaciones', require('./routes/tipoNotificaciones'))
+app.use('/medios', require('./routes/medios'))
+app.use('/notificaciones', require('./routes/notificaciones'))
 
 // Static files
 app.use(express.static(__dirname + '/public'))
