@@ -1,6 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
+var service = require('./services');
+var middleware = require('./middleware');
 
 const app = express();
 mongoose.connect('mongodb://localhost/Back_end')

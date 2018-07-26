@@ -1,14 +1,18 @@
 const express = require('express');
 const router = express.Router();
+var service = require('../services');
+var middleware = require('../middleware');
 
 const Cliente = require('../models/clienteModel');
 
+//envia token
 router.get('/', async (req, res) =>{
     const clientes = await Cliente.find();
-    res.json(clientes);
+    res.json(clientes).send({token: service.createToken(clientes)});;
 });
 
-router.get('/:identificacion', async (req, res) =>{
+//verifica token
+router.get('/:identificacion',middleware.ensureAuthenticated, async (req, res) =>{
     let identificacion = req.params.identificacion
     await Cliente.findOne( {identificacion:identificacion}, (err, cliente) => {
         if(err) return res.status(500).send({ message: 'error al realizar la peticion'})
