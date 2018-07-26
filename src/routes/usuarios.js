@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
+var middleware = require('../middleware');
 
 const Usuario = require('../models/usuarioModel');
 
-router.get('/', async (req, res) =>{
+router.get('/',middleware.ensureAuthenticated, async (req, res) =>{
     const usuarios = await Usuario.find();
     res.json(usuarios);
 });
 
-router.get('/:cliente', async (req, res) =>{
+router.get('/:cliente',middleware.ensureAuthenticated, async (req, res) =>{
     let cliente = req.params.cliente
     await Usuario.findOne( {cliente:cliente}, (err, usuario) => {
         if(err) return res.status(500).send({ message: 'error al realizar la peticion'})
@@ -18,7 +19,7 @@ router.get('/:cliente', async (req, res) =>{
     })
 });
 
-router.put('/', async (req, res) => {
+router.put('/',middleware.ensureAuthenticated, async (req, res) => {
     
     const usuarios = await Usuario.find(); 
     var num = 0;
@@ -36,7 +37,7 @@ router.put('/', async (req, res) => {
     });
 });
 
-router.post('/', async (req, res) => {
+router.post('/',middleware.ensureAuthenticated, async (req, res) => {
     let usuario = await Usuario.findOne({cliente:req.body.cliente})
     Object.assign(usuario, req.body)
     await usuario.save()
@@ -45,7 +46,7 @@ router.post('/', async (req, res) => {
     });
 });
 
-router.delete('/', async (req, res) => {
+router.delete('/',middleware.ensureAuthenticated, async (req, res) => {
     console.log(req.query);
    await Usuario.findByIdAndRemove(req.query);
    res.json({

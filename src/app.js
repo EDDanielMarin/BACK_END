@@ -32,6 +32,7 @@ app.use('/sensores', require('./routes/sensores'))
 app.use('/tipoNotificaciones', require('./routes/tipoNotificaciones'))
 app.use('/medios', require('./routes/medios'))
 app.use('/notificaciones', require('./routes/notificaciones'))
+app.use('/login', require('./routes/login'))
 
 // Static files
 app.use(express.static(__dirname + '/public'))

@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
+var middleware = require('../middleware');
 
 const NotificacionUsuario = require('../models/notificacionUsuarioModel');
 
-router.get('/', async (req, res) => {
+router.get('/',middleware.ensureAuthenticated, async (req, res) => {
     const notificacionUsuarios = await NotificacionUsuario.find();
     res.json(notificacionUsuarios);
 });
 
-router.get('/:usuario/:notificacion', async (req, res) => {
+router.get('/:usuario/:notificacion',middleware.ensureAuthenticated, async (req, res) => {
     let usuario = req.params.usuario
     let notificacion = req.params.notificacion
     await NotificacionUsuario.findOne({ usuario: usuario, notificacion: notificacion }, (err, notificacionUsuario) => {
@@ -19,7 +20,7 @@ router.get('/:usuario/:notificacion', async (req, res) => {
     })
 });
 
-router.put('/', async (req, res) => {
+router.put('/',middleware.ensureAuthenticated, async (req, res) => {
 
     const notificacionUsuario = new NotificacionUsuario(req.body);
 
@@ -29,7 +30,7 @@ router.put('/', async (req, res) => {
     });
 });
 
-router.delete('/', async (req, res) => {
+router.delete('/',middleware.ensureAuthenticated, async (req, res) => {
     console.log(req.query);
     await NotificacionUsuario.findByIdAndRemove(req.query);
     res.json({
