@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
+var middleware = require('../middleware');
 
 const LecturaUsuario = require('../models/lecturaUsuarioModel');
 
-router.get('/', async (req, res) => {
+router.get('/',middleware.ensureAuthenticated, async (req, res) => {
     const lecturaUsuarios = await LecturaUsuario.find();
     res.json(lecturaUsuarios);
 });
 
-router.get('/:usuario/:lectura', async (req, res) => {
+router.get('/:usuario/:lectura',middleware.ensureAuthenticated, async (req, res) => {
     let usuario = req.params.usuario
     let lectura = req.params.lectura
     await LecturaUsuario.findOne({ usuario: usuario, lectura: lectura }, (err, lecturaUsuario) => {
@@ -19,7 +20,7 @@ router.get('/:usuario/:lectura', async (req, res) => {
     })
 });
 
-router.put('/', async (req, res) => {
+router.put('/',middleware.ensureAuthenticated, async (req, res) => {
 
     const lecturaUsuario = new LecturaUsuario(req.body);
 
@@ -29,7 +30,7 @@ router.put('/', async (req, res) => {
     });
 });
 
-router.delete('/', async (req, res) => {
+router.delete('/',middleware.ensureAuthenticated, async (req, res) => {
     console.log(req.query);
     await LecturaUsuario.findByIdAndRemove(req.query);
     res.json({

@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
+var middleware = require('../middleware');
 
 const TipoNotificacion = require('../models/tipoNotificacionModel');
 
-router.get('/', async (req, res) =>{
+router.get('/',middleware.ensureAuthenticated, async (req, res) =>{
     const tipoNotificacions = await TipoNotificacion.find();
     res.json(tipoNotificacions);
 });
 
-router.get('/:codigo', async (req, res) =>{
+router.get('/:codigo',middleware.ensureAuthenticated, async (req, res) =>{
     let codigo = req.params.codigo
     await TipoNotificacion.findOne( {codigo:codigo}, (err, tipoNotificacion) => {
         if(err) return res.status(500).send({ message: 'error al realizar la peticion'})
@@ -18,7 +19,7 @@ router.get('/:codigo', async (req, res) =>{
     })
 });
 
-router.put('/', async (req, res) => {
+router.put('/',middleware.ensureAuthenticated, async (req, res) => {
     
     const tipoNotificacions = await TipoNotificacion.find(); 
     var num = 0;
@@ -36,7 +37,7 @@ router.put('/', async (req, res) => {
     });
 });
 
-router.post('/', async (req, res) => {
+router.post('/',middleware.ensureAuthenticated, async (req, res) => {
     let tipoNotificacion = await TipoNotificacion.findOne({codigo:req.body.codigo})
     Object.assign(tipoNotificacion, req.body)
     await tipoNotificacion.save()
@@ -45,7 +46,7 @@ router.post('/', async (req, res) => {
     });
 });
 
-router.delete('/', async (req, res) => {
+router.delete('/',middleware.ensureAuthenticated, async (req, res) => {
     console.log(req.query);
    await TipoNotificacion.findByIdAndRemove(req.query);
    res.json({

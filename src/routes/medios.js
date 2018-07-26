@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
+var middleware = require('../middleware');
 
 const Medio = require('../models/medioModel');
 
-router.get('/', async (req, res) =>{
+router.get('/',middleware.ensureAuthenticated, async (req, res) =>{
     const medios = await Medio.find();
     res.json(medios);
 });
 
-router.get('/:codigo', async (req, res) =>{
+router.get('/:codigo',middleware.ensureAuthenticated, async (req, res) =>{
     let codigo = req.params.codigo
     await Medio.findOne( {codigo:codigo}, (err, medio) => {
         if(err) return res.status(500).send({ message: 'error al realizar la peticion'})
@@ -18,7 +19,7 @@ router.get('/:codigo', async (req, res) =>{
     })
 });
 
-router.put('/', async (req, res) => {
+router.put('/',middleware.ensureAuthenticated, async (req, res) => {
     
     const medios = await Medio.find(); 
     var num = 0;
@@ -36,7 +37,7 @@ router.put('/', async (req, res) => {
     });
 });
 
-router.post('/', async (req, res) => {
+router.post('/',middleware.ensureAuthenticated, async (req, res) => {
     let medio = await Medio.findOne({codigo:req.body.codigo})
     Object.assign(medio, req.body)
     await medio.save()
@@ -45,7 +46,7 @@ router.post('/', async (req, res) => {
     });
 });
 
-router.delete('/', async (req, res) => {
+router.delete('/',middleware.ensureAuthenticated, async (req, res) => {
     console.log(req.query);
    await Medio.findByIdAndRemove(req.query);
    res.json({
