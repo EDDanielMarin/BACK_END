@@ -1,16 +1,20 @@
 const express = require('express');
 const router = express.Router();
+var service = require('../services');
+var middleware = require('../middleware');
 
 const Cliente = require('../models/clienteModel');
 
+//envia token
 router.get('/', async (req, res) =>{
     const clientes = await Cliente.find();
-    res.json(clientes);
+    res.json(clientes).send({token: service.createToken(clientes)});;
 });
 
-router.get('/:numdocumento', async (req, res) =>{
-    let numdocumento = req.params.numdocumento
-    await Cliente.findOne( {num_documento:numdocumento}, (err, cliente) => {
+//verifica token
+router.get('/:identificacion',middleware.ensureAuthenticated, async (req, res) =>{
+    let identificacion = req.params.identificacion
+    await Cliente.findOne( {identificacion:identificacion}, (err, cliente) => {
         if(err) return res.status(500).send({ message: 'error al realizar la peticion'})
         if(!cliente) return res.status(404).send({ mesagge :' el cliente no exiten'})
 
@@ -19,7 +23,17 @@ router.get('/:numdocumento', async (req, res) =>{
 });
 
 router.put('/', async (req, res) => {
+    
+    const clientes = await Cliente.find(); 
+    var num = 0;
+    if(clientes.length > 0)
+    {
+        if(clientes[clientes.length-1])
+             num = clientes[clientes.length-1].codigo
+    }
     const cliente = new Cliente(req.body);
+    cliente.codigo=num+1
+
     await cliente.save();
     res.json({
         status: 'Cliente Guardado'
@@ -27,25 +41,12 @@ router.put('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    let cliente = await Cliente.findOne({num_documento:req.body.num_documento})
+    let cliente = await Cliente.findOne({identificacion:req.body.identificacion})
     Object.assign(cliente, req.body)
     await cliente.save()
     res.json({
         status: 'Cliente Actualizado'
     });
-//    Cliente.findOne({cedula:req.body.id})
-//     .then(cliente => {
-//         Object.assign(cliente, req.body)
-//         return cliente.save()
-//     })
-//     .then(() => {
-//         res.json({
-//             status:'Cliente actualizado'
-//            });
-//     })
-//     .catch(err => {
-
-//     })
 });
 
 router.delete('/', async (req, res) => {
