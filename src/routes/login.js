@@ -10,7 +10,7 @@ router.post('/', async (req, res) => {
     if(!usuario){
         res.status(404).send({ mesagge :' el usuario no exite'})
     }else{
-        res.status(200).send({token: service.createToken(usuario)});
+        res.status(200).send({user:usuario,token: service.createToken(usuario)});
     }
         
     
