@@ -24,7 +24,6 @@ app.use(function(req, res, next) {
 //Routes
 app.use('/clientes', require('./routes/clientes'))
 app.use('/usuarios', require('./routes/usuarios'))
-app.use('/lecturaUsuarios', require('./routes/lecturaUsuarios'))
 app.use('/notificacionUsuarios', require('./routes/notificacionUsuarios'))
 app.use('/parametroConfigs', require('./routes/parametroConfigs'))
 app.use('/lecturas', require('./routes/lecturas'))

@@ -6,10 +6,12 @@ const Sensor = new Schema({
         type:Number,
         required: 'Es necesario el codigo'
     },
+    usuario:{
+        type:Number,
+        required:'Es necesario el codigo de Usuario'
+    },
     tipo: {
-        type: String,
-        required:'Es necesario el codigo de Usuario',
-        maxlength:[5,"Tipo muy extenso"]
+        type: String
     },
     ip: {
         type: String
