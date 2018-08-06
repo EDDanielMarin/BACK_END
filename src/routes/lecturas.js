@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 var middleware = require('../middleware');
+var nodemailer = require('nodemailer');
+
 
 //modelos
 const Lectura = require('../models/lecturaModel');
@@ -8,6 +10,7 @@ const ParametroConfig = require('../models/parametroConfigModel');
 const Notificacion = require('../models/notificacionModel');
 const NotificacionUsuario = require('../models/notificacionUsuarioModel');
 const Sensor = require('../models/sensorModel');
+const Cliente = require('../models/clienteModel');
 
 router.get('/', middleware.ensureAuthenticated, async (req, res) => {
     const lecturas = await Lectura.find();
@@ -47,7 +50,7 @@ router.get('/:usuario/:fechaInicial/:fechaFinal', middleware.ensureAuthenticated
 router.get('/:sensor/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {
 
     const lectura = new Lectura();
-    const sensorUsuario = await Sensor.findOne({codigo:req.params.sensor});
+    const sensorUsuario = await Sensor.findOne({ codigo: req.params.sensor });
     lectura.sensor = req.params.sensor;
     lectura.adc = req.params.adc;
     lectura.ppm = req.params.ppm;
@@ -101,6 +104,7 @@ router.delete('/', middleware.ensureAuthenticated, async (req, res) => {
 async function EnvioNotificaciones(sensor, usuario, nombre, valor) {
     const parametro = await ParametroConfig.findOne({ usuario: usuario, nombre: nombre });
     const sensorAfectado = await Sensor.findOne({ codigo: sensor });
+    const cliente = await Cliente.findOne({ codigo: usuario });
     if (parametro.valor < valor) {
         const notificaciones = await Notificacion.find();
         var num = 0;
@@ -117,10 +121,33 @@ async function EnvioNotificaciones(sensor, usuario, nombre, valor) {
         notificacion.hora = new Date();
         await notificacion.save();
 
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'raspberry.sromero@gmail.com',
+                pass: 'proyectoNode'
+            }
+        });
+
+        var mailOptions = {
+            from: 'raspberry.sromero@gmail.com',
+            to: cliente.correo,
+            subject: notificacion.asunto,
+            text: notificacion.descripcion
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email enviado: ' + info.response);
+            }
+        });
+
         //guardar en la tabla notificacionUsuario
         const notificacionUsuario = new NotificacionUsuario();
         notificacionUsuario.usuario = usuario;
-        notificacionUsuario.notificacion =  notificacion.codigo;
+        notificacionUsuario.notificacion = notificacion.codigo;
         await notificacionUsuario.save();
     }
 }
