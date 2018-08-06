@@ -19,11 +19,11 @@ const Notificacion = new Schema({
 		required:'Es necesario el asunto'
     },
     descripcion: {
-        type: String
+        type: String,
 		required:'Es necesario la descripción'
     },
     hora: {
-        type: Date
+        type: Date,
 		required:'Es necesario la hora'
     }
 });
