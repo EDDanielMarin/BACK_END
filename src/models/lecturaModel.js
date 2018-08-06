@@ -11,27 +11,27 @@ const Lectura = new Schema({
         required:'Es necesario el número del equipo'
     },
     adc: {
-        type: Number
+        type: Number,
 		required:'Es necesaria la conversión analógica-digital'
     },
     ppm: {
-        type: Number
+        type: Number,
 		required:'Es necesaria la concentración en ppm'
     },
     estado: {
-        type: Number
+        type: Number,
 		required:'Es necesario el estado de detección'
     },
     voltaje: {
-        type: Number
+        type: Number,
 		required:'Es necesario el valor de voltaje'
     },
     mgm3: {
-        type: Number
+        type: Number,
 		required:'Es necesaria la concentración en mgm3
     },
     hora: {
-        type: Date
+        type: Date,
 		required:'Es necesaria la hora'
     }
 });
