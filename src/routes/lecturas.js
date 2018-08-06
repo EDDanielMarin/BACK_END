@@ -103,10 +103,10 @@ router.delete('/', middleware.ensureAuthenticated, async (req, res) => {
     });
 });
 
-    const cliente = await Cliente.findOne({ codigo: usuario });
+    
 async function EnvioNotificaciones(equipo, usuario, nombre, valor) {//Se define la función EnvioNotificaciones
     const parametro = await ParametroConfig.findOne({ usuario: usuario, nombre: nombre });//Se busca el parámetro de configuración de la notificación de acuerdo al usuario
-    																																									//y nombre del parámetro (adc, ppm, estado, voltaje o mgm3)
+    const cliente = await Cliente.findOne({ codigo: usuario });																																									//y nombre del parámetro (adc, ppm, estado, voltaje o mgm3)
 	const equipoAfectado = await Equipo.findOne({ codigo: equipo });//Se busca el equipo afectado  
     if (parametro.valor < valor) {//Si el valor del parámetro configurado es menor que el valor de la lectura
         const notificaciones = await Notificacion.find();//Se busca todas las notificaciones
