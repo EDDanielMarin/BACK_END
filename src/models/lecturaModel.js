@@ -28,7 +28,7 @@ const Lectura = new Schema({
     },
     mgm3: {
         type: Number,
-		required:'Es necesaria la concentración en mgm3
+		required:'Es necesaria la concentración en mgm3'
     },
     hora: {
         type: Date,
