@@ -12,8 +12,8 @@ router.get('/',middleware.ensureAuthenticated, async (req, res) =>{
 router.get('/:codigo',middleware.ensureAuthenticated, async (req, res) =>{
     let codigo = req.params.codigo
     await Medio.findOne( {codigo:codigo}, (err, medio) => {
-        if(err) return res.status(500).send({ message: 'error al realizar la peticion'})
-        if(!medio) return res.status(404).send({ mesagge :' el medio no exiten'})
+        if(err) return res.status(500).send({ message: 'error al realizar la petición'})
+        if(!medio) return res.status(404).send({ mesagge :' el medio no existe'})
 
         res.json(medio)
     })
@@ -50,7 +50,7 @@ router.delete('/',middleware.ensureAuthenticated, async (req, res) => {
     console.log(req.query);
    await Medio.findByIdAndRemove(req.query);
    res.json({
-    status:'Medio eliminado'
+    status:'Medio Eliminado'
    });
 });
 

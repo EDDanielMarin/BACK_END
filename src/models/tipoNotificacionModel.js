@@ -4,11 +4,11 @@ const { Schema } = mongoose;
 const TipoNotificacion = new Schema({
     codigo:{
         type:Number,
-        required: 'Es necesario el codigo'
+        required: 'Es necesario el código'
     },
     descripcion: {
         type: String,
-        required:'Es necesaria la descripcion'
+        required:'Es necesaria la descripción'
     }
 });
 

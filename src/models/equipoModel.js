@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const Sensor = new Schema({
+const Equipo = new Schema({
     codigo:{
         type:Number,
-        required: 'Es necesario el codigo'
+        required: 'Es necesario el código'
     },
     usuario:{
         type:Number,
-        required:'Es necesario el codigo de Usuario'
+        required:'Es necesario el código de Usuario'
     },
     tipo: {
         type: String
@@ -22,4 +22,4 @@ const Sensor = new Schema({
     
 });
 
-module.exports = mongoose.model('Sensor', Sensor,'Sensor');
+module.exports = mongoose.model('Equipo', Equipo,'Equipo');

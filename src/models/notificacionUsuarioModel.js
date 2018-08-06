@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const notificacionUsuario = new Schema({
+const NotificacionUsuario = new Schema({
     usuario:{
         type:Number,
-        required: 'Es necesario el codigo de usuario'
+        required: 'Es necesario el código de usuario'
     },
     notificacion: {
         type: Number,
-        required:'Es necesario el numero de notificacion'
+        required:'Es necesario el número de notificación'
     }
 });
 
-module.exports = mongoose.model('NotificacionUsuario', notificacionUsuario,'NotificacionUsuario');
+module.exports = mongoose.model('NotificacionUsuario', NotificacionUsuario,'NotificacionUsuario');
