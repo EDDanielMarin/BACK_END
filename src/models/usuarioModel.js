@@ -4,12 +4,11 @@ const { Schema } = mongoose;
 const Usuario = new Schema({
     codigo:{
         type:Number,
-        required: 'Es necesario el codigo'
+        required: 'Es necesario el código'
     },
     cliente: {
-        type: String,
-        required:'Es necesaria la identificacion del cliente',
-        maxlength:[13,"Numero de documento extenso"]
+        type: Number,
+        required:'Es necesaria la identificación del cliente',    
     },
     nombreUsuario: {
         type: String,

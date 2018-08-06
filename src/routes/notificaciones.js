@@ -5,15 +5,15 @@ var middleware = require('../middleware');
 const Notificacion = require('../models/notificacionModel');
 
 router.get('/',middleware.ensureAuthenticated, async (req, res) =>{
-    const notificacions = await Notificacion.find();
-    res.json(notificacions);
+    const notificaciones = await Notificacion.find();
+    res.json(notificaciones);
 });
 
 router.get('/:codigo',middleware.ensureAuthenticated, async (req, res) =>{
     let codigo = req.params.codigo
     await Notificacion.findOne( {codigo:codigo}, (err, notificacion) => {
-        if(err) return res.status(500).send({ message: 'error al realizar la peticion'})
-        if(!notificacion) return res.status(404).send({ mesagge :' el notificacion no exiten'})
+        if(err) return res.status(500).send({ message: 'error al realizar la petición'})
+        if(!notificacion) return res.status(404).send({ mesagge :' la notificación no exite'})
 
         res.json(notificacion)
     })
@@ -21,12 +21,12 @@ router.get('/:codigo',middleware.ensureAuthenticated, async (req, res) =>{
 
 router.put('/',middleware.ensureAuthenticated, async (req, res) => {
     
-    const notificacions = await Notificacion.find(); 
+    const notificaciones = await Notificacion.find(); 
     var num = 0;
-    if(notificacions.length > 0)
+    if(notificaciones.length > 0)
     {
-        if(notificacions[notificacions.length-1])
-             num = notificacions[notificacions.length-1].codigo
+        if(notificaciones[notificaciones.length-1])
+             num = notificaciones[notificaciones.length-1].codigo
     }
     const notificacion = new Notificacion(req.body);
     notificacion.codigo=num+1
@@ -34,7 +34,7 @@ router.put('/',middleware.ensureAuthenticated, async (req, res) => {
 
     await notificacion.save();
     res.json({
-        status: 'Notificacion Guardado'
+        status: 'Notificación Guardada'
     });
 });
 
@@ -43,7 +43,7 @@ router.post('/',middleware.ensureAuthenticated, async (req, res) => {
     Object.assign(notificacion, req.body)
     await notificacion.save()
     res.json({
-        status: 'Notificacion Actualizado'
+        status: 'Notificación Actualizada'
     });
 });
 
@@ -51,7 +51,7 @@ router.delete('/',middleware.ensureAuthenticated, async (req, res) => {
     console.log(req.query);
    await Notificacion.findByIdAndRemove(req.query);
    res.json({
-    status:'Notificacion eliminado'
+    status:'Notificación eliminada'
    });
 });
 

@@ -13,8 +13,8 @@ router.get('/:usuario/:notificacion',middleware.ensureAuthenticated, async (req,
     let usuario = req.params.usuario
     let notificacion = req.params.notificacion
     await NotificacionUsuario.findOne({ usuario: usuario, notificacion: notificacion }, (err, notificacionUsuario) => {
-        if (err) return res.status(500).send({ message: 'error al realizar la peticion' })
-        if (!notificacionUsuario) return res.status(404).send({ mesagge: ' el notificacionUsuario no exiten' })
+        if (err) return res.status(500).send({ message: 'error al realizar la petición' })
+        if (!notificacionUsuario) return res.status(404).send({ mesagge: ' la notificacionUsuario no existe' })
 
         res.json(notificacionUsuario)
     })
@@ -26,7 +26,7 @@ router.put('/',middleware.ensureAuthenticated, async (req, res) => {
 
     await notificacionUsuario.save();
     res.json({
-        status: 'NotificacionUsuario Guardado'
+        status: 'NotificacionUsuario Guardada'
     });
 });
 
