@@ -6,7 +6,7 @@ const Equipo = require('../models/equipoModel');
 
 router.get('/',middleware.ensureAuthenticated, async (req, res) =>{
     const equipos = await Equipo.find();
-    res.json(sensors);
+    res.json(equipos);
 });
 
 router.get('/:codigo',middleware.ensureAuthenticated, async (req, res) =>{
