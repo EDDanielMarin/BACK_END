@@ -34,7 +34,7 @@ router.delete('/',middleware.ensureAuthenticated, async (req, res) => {
     console.log(req.query);
     await NotificacionUsuario.findByIdAndRemove(req.query);
     res.json({
-        status: 'NotificacionUsuario eliminado'
+        status: 'NotificacionUsuario eliminada'
     });
 });
 

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 var middleware = require('../middleware');
-var nodemailer = require('nodemailer');
+var nodemailer = require('nodemailer');//Permite incluir el módulo nodemailer en el código para que sea posible el envío de correos electrónicos
 
 
 //modelos
@@ -106,7 +106,7 @@ router.delete('/', middleware.ensureAuthenticated, async (req, res) => {
     
 async function EnvioNotificaciones(equipo, usuario, nombre, valor) {//Se define la función EnvioNotificaciones
     const parametro = await ParametroConfig.findOne({ usuario: usuario, nombre: nombre });//Se busca el parámetro de configuración de la notificación de acuerdo al usuario
-    const cliente = await Cliente.findOne({ codigo: usuario });																																									//y nombre del parámetro (adc, ppm, estado, voltaje o mgm3)
+    const cliente = await Cliente.findOne({ codigo: usuario });//Se busca el cliente de acuerdo al usuario afectado 																																								//y nombre del parámetro (adc, ppm, estado, voltaje o mgm3)
 	const equipoAfectado = await Equipo.findOne({ codigo: equipo });//Se busca el equipo afectado  
     if (parametro.valor < valor) {//Si el valor del parámetro configurado es menor que el valor de la lectura
         const notificaciones = await Notificacion.find();//Se busca todas las notificaciones
@@ -124,26 +124,26 @@ async function EnvioNotificaciones(equipo, usuario, nombre, valor) {//Se define 
         notificacion.hora = new Date();
         await notificacion.save();//se guarda la notificación
 
-        var transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
+        var transporter = nodemailer.createTransport({//Se crea el servicio de transporte necesario para poder enviar correos electrónicos
+            service: 'gmail',//Se especifica el uso de gmail
+            auth: {//Se define el objeto de autenticación especificando la cuenta y contraseña de gmail
                 user: 'raspberry.sromero@gmail.com',
                 pass: 'proyectoNode'
             }
         });
 
-        var mailOptions = {
+        var mailOptions = {//Se especifican los detalles del correo a enviar como emisor, receptor, asunto y texto
             from: 'raspberry.sromero@gmail.com',
             to: cliente.correo,
             subject: notificacion.asunto,
             text: notificacion.descripcion
         };
 
-        transporter.sendMail(mailOptions, function (error, info) {
+        transporter.sendMail(mailOptions, function (error, info) {//Se usa el servicio de transporte creado anteriormente para enviar el correo de acuerdo a los detalles especificados previamente
             if (error) {
-                console.log(error);
+                console.log(error);//Si existe algún error se muestra por consola el error
             } else {
-                console.log('Email enviado: ' + info.response);
+                console.log('Email enviado: ' + info.response);//Caso contrario se muestra por consola el mensaje correspondiente al envío del correo
             }
         });
 
