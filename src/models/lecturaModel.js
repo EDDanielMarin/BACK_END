@@ -10,6 +10,9 @@ const Lectura = new Schema({
         type: Number,
         required:'Es necesario el número del equipo'
     },
+    sensor: {
+        type: Number,
+    },
     adc: {
         type: Number,
 		required:'Es necesaria la conversión analógica-digital'

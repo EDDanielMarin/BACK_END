@@ -39,7 +39,7 @@ router.get('/:usuario/:fechaInicial/:fechaFinal', middleware.ensureAuthenticated
         console.log(lectura);
         lectura.forEach(function (itemLect) {
             equiposPorUsuario.forEach(function (item) {
-                if (itemLect.equipo == item.codigo) {//Si el campo equipo de Lectura es igual al campo código de Equipo 
+                if (itemLect.sensor == item.codigo) {//Si el campo equipo de Lectura es igual al campo código de Equipo 
                     lecturasAEnviar.push(itemLect);//Se almacenas las lecturas en el array lecturasAEnviar
                 }
             });
