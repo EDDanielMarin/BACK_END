@@ -17,8 +17,8 @@ app.use(express.json());//Permite mapear las peticiones entrantes a payloads JSO
 app.use(function(req, res, next) {//Permite habilitar CORS(cross-origin resource sharing) en la aplicación de Express
 														  //Se define un conjunto de encabezados que permiten al navegador y al servidor conocer qué solicitudes están (y no están) permitidas.
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     next();
 });
 
