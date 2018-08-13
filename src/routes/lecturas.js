@@ -36,7 +36,7 @@ router.get('/:usuario/:fechaInicial/:fechaFinal', middleware.ensureAuthenticated
 																																																		//y final
         if (err) return res.status(500).send({ message: 'error al realizar la petición' })
         if (!lectura) return res.status(404).send({ mesagge: ' las lecturas no exiten' })
-        console.log(lectura);
+        //console.log(lectura);
         lectura.forEach(function (itemLect) {
             equiposPorUsuario.forEach(function (item) {
                 if (itemLect.sensor == item.codigo) {//Si el campo equipo de Lectura es igual al campo código de Equipo 
