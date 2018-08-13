@@ -32,9 +32,7 @@ router.put('/',middleware.ensureAuthenticated, async (req, res) => {
     usuario.codigo=num+1
 
     await usuario.save();
-    res.json({
-        status: 'Usuario Guardado'
-    });
+    res.json(usuario);
 });
 
 router.post('/',middleware.ensureAuthenticated, async (req, res) => {
