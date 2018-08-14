@@ -58,9 +58,9 @@ router.delete('/:usuario', middleware.ensureAuthenticated, async (req, res) => {
     await Equipo.find({ usuario: cli }, (err, usuarios) => {
         if (err)
             return res.status(500).send({ message: 'error al realizar la petición' })
-        if (!usuario)
+        if (!usuarios)
             return res.status(404).send({ mesagge: 'no hay equipos del usuario' })
-        usuarios.array.forEach(element => {
+        usuarios.forEach(element => {
             Equipo.findByIdAndRemove(element._id);
         });
         res.json({
