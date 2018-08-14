@@ -28,12 +28,12 @@ router.get('/:codigo', middleware.ensureAuthenticated, async (req, res) => {//Se
 });
 
 router.get('/:usuario/:fechaInicial/:fechaFinal', middleware.ensureAuthenticated, async (req, res) => {//Se define una nueva ruta para el método GET usando el parámetro usuario,
-																																													 //fecha inicial y final
+    //fecha inicial y final
     let usuario = req.params.usuario
     lecturasAEnviar = [];
     const equiposPorUsuario = await Equipo.find({ usuario: usuario });//Realiza la búsqueda de usuario en Equipo
     await Lectura.find({ "hora": { "$gte": req.params.fechaInicial, "$lt": req.params.fechaFinal } }, (err, lectura) => {//Realiza la búsqueda en el campo hora de Lectura de acuerdo a fecha inicial
-																																																		//y final
+        //y final
         if (err) return res.status(500).send({ message: 'error al realizar la petición' })
         if (!lectura) return res.status(404).send({ mesagge: ' las lecturas no exiten' })
         //console.log(lectura);
@@ -50,9 +50,9 @@ router.get('/:usuario/:fechaInicial/:fechaFinal', middleware.ensureAuthenticated
 });
 
 router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//Se define una nueva ruta para el método GET usando el parámetro equipo, adc, ppm, estado, volatje y mgm3
-																																		  //Sirve para poder guardar la lectura correspondiente al envío de datos desde el equipo transmisor
+    //Sirve para poder guardar la lectura correspondiente al envío de datos desde el equipo transmisor
     const lectura = new Lectura();//Se crea una nueva Lectura
-    const equipoUsuario = await Equipo.findOne({codigo:req.params.equipo});//Se realiza la búsqueda del equipo
+    const equipoUsuario = await Equipo.findOne({ codigo: req.params.equipo });//Se realiza la búsqueda del equipo
     lectura.equipo = req.params.equipo; //Se almacenan en los campos correspondientes de lectura los parámetros correspondientes enviados en la petición
     lectura.adc = req.params.adc;
     lectura.ppm = req.params.ppm;
@@ -68,10 +68,10 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
     }
 
     //Comprobación de valores altos
-    await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "adc", req.params.adc);
+    //await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "adc", req.params.adc);
     await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "ppm", req.params.ppm);
-    await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "estado", req.params.estado);
-    await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "voltaje", req.params.voltaje);
+    //await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "estado", req.params.estado);
+    //await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "voltaje", req.params.voltaje);
     await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "mgm3", req.params.mgm3);
 
 
@@ -103,56 +103,99 @@ router.delete('/', middleware.ensureAuthenticated, async (req, res) => {
     });
 });
 
-    
-async function EnvioNotificaciones(equipo, usuario, nombre, valor) {//Se define la función EnvioNotificaciones
-    const parametro = await ParametroConfig.findOne({ usuario: usuario, nombre: nombre });//Se busca el parámetro de configuración de la notificación de acuerdo al usuario
-    const cliente = await Cliente.findOne({ codigo: usuario });//Se busca el cliente de acuerdo al usuario afectado 																																								//y nombre del parámetro (adc, ppm, estado, voltaje o mgm3)
-	const equipoAfectado = await Equipo.findOne({ codigo: equipo });//Se busca el equipo afectado  
-    if (parametro.valor < valor) {//Si el valor del parámetro configurado es menor que el valor de la lectura
-        const notificaciones = await Notificacion.find();//Se busca todas las notificaciones
-        var num = 0;
-        if (notificaciones.length > 0) {
-            if (notificaciones[notificaciones.length - 1])
-                num = notificaciones[notificaciones.length - 1].codigo//Se asigna en num el código de la última notificación
+
+async function EnvioNotificaciones(equipo, usuario, nombre, valorDeEntrada) {//Se define la función EnvioNotificaciones
+
+
+    const parametrosEncontrados = await ParametroConfig.find({ usuario: usuario });//Se busca el parámetro de configuración de la notificación de acuerdo al usuario
+
+    nuevoArray = [];
+
+    parametrosEncontrados.forEach(function (item) {
+        var arrayTipo = item.nombre.split("_");
+        console.log(nombre + " == " + arrayTipo[0])
+        if (arrayTipo[0] === nombre) {
+            nuevoArray.push(item);
         }
-        const notificacion = new Notificacion();//Se crea una nueva notificación y se asignan los valores correspondientes
-        notificacion.tipo = 1;
-        notificacion.medio = 1;
-        notificacion.asunto = "Valores altos de " + nombre;
-        notificacion.descripcion = "Se presentó el valor: " + valor + " en " + nombre + " en el equipo con ip: " + equipoAfectado.ip;
-        notificacion.codigo = num + 1
-        notificacion.hora = new Date();
-        await notificacion.save();//se guarda la notificación
+    });
 
-        var transporter = nodemailer.createTransport({//Se crea el servicio de transporte necesario para poder enviar correos electrónicos
-            service: 'gmail',//Se especifica el uso de gmail
-            auth: {//Se define el objeto de autenticación especificando la cuenta y contraseña de gmail
-                user: 'raspberry.sromero@gmail.com',
-                pass: 'proyectoNode'
-            }
-        });
-
-        var mailOptions = {//Se especifican los detalles del correo a enviar como emisor, receptor, asunto y texto
-            from: 'raspberry.sromero@gmail.com',
-            to: cliente.correo,
-            subject: notificacion.asunto,
-            text: notificacion.descripcion
-        };
-
-        transporter.sendMail(mailOptions, function (error, info) {//Se usa el servicio de transporte creado anteriormente para enviar el correo de acuerdo a los detalles especificados previamente
-            if (error) {
-                console.log(error);//Si existe algún error se muestra por consola el error
-            } else {
-                console.log('Email enviado: ' + info.response);//Caso contrario se muestra por consola el mensaje correspondiente al envío del correo
-            }
-        });
-
-        //Se guarda en la tabla notificacionUsuario
-        const notificacionUsuario = new NotificacionUsuario();
-        notificacionUsuario.usuario = usuario;
-        notificacionUsuario.notificacion = notificacion.codigo;
-        await notificacionUsuario.save();
+    console.log(JSON.stringify(nuevoArray));
+    console.log(nombre);
+    console.log(valorDeEntrada);
+    var arrayTipoAUX = nuevoArray[0].nombre.split("_");
+    if(arrayTipoAUX[1] === "e"){
+        if (nuevoArray[0].valor < valorDeEntrada) {
+            await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 2);
+        } else if (nuevoArray[1].valor < valorDeEntrada) {
+            await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 1);
+        }
+    }else{
+        if (nuevoArray[1].valor < valorDeEntrada) {
+            await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 2);
+        } else if (nuevoArray[0].valor < valorDeEntrada) {
+            console.log("1")
+            await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 1);
+        }
     }
+    
+}
+
+async function EnviarNotificacionPorTipo(equipo, usuario, nombre, valor, tipo) {
+
+    const cliente = await Cliente.findOne({ codigo: usuario });//Se busca el cliente de acuerdo al usuario afectado 																																								//y nombre del parámetro (adc, ppm, estado, voltaje o mgm3)
+
+    const equipoAfectado = await Equipo.findOne({ codigo: equipo });//Se busca el equipo afectado
+
+    const notificaciones = await Notificacion.find();//Se busca todas las notificaciones
+
+    var num = 0;
+    if (notificaciones.length > 0) {
+        if (notificaciones[notificaciones.length - 1])
+            num = notificaciones[notificaciones.length - 1].codigo//Se asigna en num el código de la última notificación
+    }
+    const notificacion = new Notificacion();//Se crea una nueva notificación y se asignan los valores correspondientes
+    notificacion.tipo = tipo;
+    notificacion.medio = 1;
+    if (tipo === 1) {
+        notificacion.asunto = "Alarma de valor alto en " + nombre;
+    } else {
+        notificacion.asunto = "Emergencia! Valor alto en " + nombre;
+    }
+
+    notificacion.descripcion = "Se presentó el valor: " + valor + " en " + nombre + " en el equipo con ip: " + equipoAfectado.ip;
+    notificacion.codigo = num + 1
+    notificacion.hora = new Date();
+    await notificacion.save();//se guarda la notificación
+
+    var transporter = nodemailer.createTransport({//Se crea el servicio de transporte necesario para poder enviar correos electrónicos
+        service: 'gmail',//Se especifica el uso de gmail
+        auth: {//Se define el objeto de autenticación especificando la cuenta y contraseña de gmail
+            user: 'raspberry.sromero@gmail.com',
+            pass: 'proyectoNode'
+        }
+    });
+
+    var mailOptions = {//Se especifican los detalles del correo a enviar como emisor, receptor, asunto y texto
+        from: 'raspberry.sromero@gmail.com',
+        to: cliente.correo,
+        subject: notificacion.asunto,
+        text: notificacion.descripcion
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {//Se usa el servicio de transporte creado anteriormente para enviar el correo de acuerdo a los detalles especificados previamente
+        if (error) {
+            console.log(error);//Si existe algún error se muestra por consola el error
+        } else {
+            console.log('Email enviado: ' + info.response);//Caso contrario se muestra por consola el mensaje correspondiente al envío del correo
+        }
+    });
+
+    //Se guarda en la tabla notificacionUsuario
+    const notificacionUsuario = new NotificacionUsuario();
+    notificacionUsuario.usuario = usuario;
+    notificacionUsuario.notificacion = notificacion.codigo;
+    await notificacionUsuario.save();
+
 }
 
 module.exports = router;
