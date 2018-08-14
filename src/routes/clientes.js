@@ -47,9 +47,9 @@ router.post('/',middleware.ensureAuthenticated, async (req, res) => {//Se define
     });
 });
 
-router.delete('/',middleware.ensureAuthenticated, async (req, res) => {//Se define una nueva ruta para el método DELETE en la raíz de la aplicación  
+router.delete('/:id',middleware.ensureAuthenticated, async (req, res) => {//Se define una nueva ruta para el método DELETE en la raíz de la aplicación  
     console.log(req.query);//Imprime por consola la consulta realizada en la petición
-   await Cliente.findByIdAndRemove(req.query);//Busca el cliente de acuerdo a los parámetros consultados en la petición y lo elimina
+   await Cliente.findByIdAndRemove(req.params.id);//Busca el cliente de acuerdo a los parámetros consultados en la petición y lo elimina
    res.json({
     status:'Cliente eliminado'//Se devuelve en la respuesta el estado correspondiente en formato JSON
    });
