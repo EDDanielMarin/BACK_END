@@ -10,8 +10,8 @@ router.get('/',middleware.ensureAuthenticated, async (req, res) =>{
 });
 
 router.get('/:cliente',middleware.ensureAuthenticated, async (req, res) =>{
-    let cliente = req.params.cliente
-    await Usuario.findOne( {cliente:cliente}, (err, usuario) => {
+    let cli = req.params.cliente
+    await Usuario.findOne( {cliente:cli}, (err, usuario) => {
         if(err) return res.status(500).send({ message: 'error al realizar la petición'})
         if(!usuario) return res.status(404).send({ mesagge :' el usuario no existe'})
 
