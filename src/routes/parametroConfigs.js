@@ -46,12 +46,27 @@ router.post('/',middleware.ensureAuthenticated, async (req, res) => {
     });
 });
 
-router.delete('/',middleware.ensureAuthenticated, async (req, res) => {
-    console.log(req.query);
-   await ParametroConfig.findByIdAndRemove(req.query);
+router.delete('/:usuario',middleware.ensureAuthenticated, async (req, res) => {
+
+    let cli = req.params.usuario
+    await Usuario.find( {usuario:cli}, (err, usuarios) => {
+        if(err) 
+        return res.status(500).send({ message: 'error al realizar la petición'})
+        if(!usuario)
+        return res.status(404).send({ mesagge :'no hay parametros del usuario'})
+        usuarios.array.forEach(element => {
+            await ParametroConfig.findByIdAndRemove(element._id);
+
+        });
+        res.json({
+            status:'Parametros eliminados'
+           });
+    })
+
+  /* await ParametroConfig.findByIdAndRemove(req.query);
    res.json({
     status:'ParametroConfig eliminado'
-   });
+   });*/
 });
 
 module.exports = router;
