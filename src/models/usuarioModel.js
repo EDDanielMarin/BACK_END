@@ -7,7 +7,7 @@ const Usuario = new Schema({
         required: 'Es necesario el código'
     },
     cliente: {
-        type: Number,
+        type: String,
         required:'Es necesaria la identificación del cliente',    
     },
     nombreUsuario: {
