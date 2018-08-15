@@ -61,6 +61,7 @@ router.delete('/:usuario', middleware.ensureAuthenticated, async (req, res) => {
         if (!usuarios)
             return res.status(404).send({ mesagge: 'no hay equipos del usuario' })
         usuarios.forEach(element => {
+            console.log(element)
             Equipo.findByIdAndRemove(element._id);
         });
         res.json({

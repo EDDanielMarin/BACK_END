@@ -49,12 +49,12 @@ router.post('/',middleware.ensureAuthenticated, async (req, res) => {
 router.delete('/:usuario',middleware.ensureAuthenticated, async (req, res) => {
 
     let cli = req.params.usuario
-    await ParametroConfig.find( {usuario:cli}, (err, usuarios) => {
+    await Usuario.find( {usuario:cli}, (err, usuarios) => {
         if(err) 
         return res.status(500).send({ message: 'error al realizar la petición'})
         if(!usuario)
         return res.status(404).send({ mesagge :'no hay parametros del usuario'})
-        usuarios.array.forEach(element => {
+        usuarios.forEach(element => {
             ParametroConfig.findByIdAndRemove(element._id);
         });
         res.json({
