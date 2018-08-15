@@ -55,7 +55,14 @@ router.delete('/:usuario',middleware.ensureAuthenticated, async (req, res) => {
         if(!usuario)
         return res.status(404).send({ mesagge :'no hay parametros del usuario'})
         usuarios.forEach(element => {
-            ParametroConfig.findByIdAndRemove(element._id);
+
+            await ParametroConfig.findByIdAndRemove(element._id,(err, res) =>{
+                res.json({
+                    status: 'Error al eliminar',
+                    error: err
+
+                });
+            });
         });
         res.json({
             status:'Parametros eliminados'
