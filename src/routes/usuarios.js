@@ -44,16 +44,14 @@ router.post('/',middleware.ensureAuthenticated, async (req, res) => {
     });
 });
 
-router.delete('/:id',middleware.ensureAuthenticated, async (req, res) => {
-    console.log(req.query);
-   await Usuario.findByIdAndRemove(req.param.id,(err,res1)=>{
-       if(!err)
-        res.json({
-            status:'Usuario eliminado'
-       });
-    
-    });
-  
+
+
+router.delete('/:id',middleware.ensureAuthenticated, async (req, res) => {//Se define una nueva ruta para el método DELETE en la raíz de la aplicación  
+    console.log(req.query);//Imprime por consola la consulta realizada en la petición
+   await Usuario.findByIdAndRemove(req.params.id);//Busca el cliente de acuerdo a los parámetros consultados en la petición y lo elimina
+   res.json({
+    status:'Usuario eliminado'//Se devuelve en la respuesta el estado correspondiente en formato JSON
+   });
 });
 
 module.exports = router;
