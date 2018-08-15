@@ -46,7 +46,7 @@ router.post('/',middleware.ensureAuthenticated, async (req, res) => {
 
 router.delete('/:id',middleware.ensureAuthenticated, async (req, res) => {
     console.log(req.query);
-   await Usuario.findByIdAndRemove(req.param.id,(err,res)=>{
+   await Usuario.findByIdAndRemove(req.param.id,(err,res1)=>{
        if(!err)
         res.json({
             status:'Usuario eliminado'
