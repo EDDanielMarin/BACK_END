@@ -19,6 +19,17 @@ router.get('/:codigo', middleware.ensureAuthenticated, async (req, res) => {
     })
 });
 
+
+router.get('/:usuario', middleware.ensureAuthenticated, async (req, res) => {
+    let codigo = req.params.usuario
+    await Equipo.findOne({ usuario: codigo }, (err, equipo) => {
+        if (err) return res.status(500).send({ message: 'error al realizar la petición' })
+        if (!equipo) return res.status(404).send({ mesagge: ' el equipo no existe' })
+
+        res.json(equipo)
+    })
+});
+
 router.put('/', middleware.ensureAuthenticated, async (req, res) => {
 
     const equipos = await Equipo.find();
