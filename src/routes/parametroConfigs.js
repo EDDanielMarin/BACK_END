@@ -11,7 +11,7 @@ router.get('/',middleware.ensureAuthenticated, async (req, res) =>{
 
 router.get('/:usuario',middleware.ensureAuthenticated, async (req, res) =>{
     let codigo = req.params.usuario
-    await ParametroConfig.findOne( {usuario:usuario}, (err, parametroConfig) => {
+    await ParametroConfig.findOne( {usuario:codigo}, (err, parametroConfig) => {
         if(err) return res.status(500).send({ message: 'error al realizar la petición'})
         if(!parametroConfig) return res.status(404).send({ mesagge :' el parametroConfig no existe'})
 

@@ -20,7 +20,7 @@ router.get('/:codigo', middleware.ensureAuthenticated, async (req, res) => {
 });
 
 
-router.get('/:usuario', middleware.ensureAuthenticated, async (req, res) => {
+router.get('/usuario/:usuario', middleware.ensureAuthenticated, async (req, res) => {
     let codigo = req.params.usuario
     await Equipo.findOne({ usuario: codigo }, (err, equipo) => {
         if (err) return res.status(500).send({ message: 'error al realizar la petición' })
