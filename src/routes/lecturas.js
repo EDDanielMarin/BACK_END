@@ -26,17 +26,11 @@ router.get('/:codigo', middleware.ensureAuthenticated, async (req, res) => {//Se
         res.json(lectura)
     })
 });
-/*
+
 router.get('/:usuario/:fechaInicial/:fechaFinal', middleware.ensureAuthenticated, async (req, res) => {//Se define una nueva ruta para el método GET usando el parámetro usuario,
     //fecha inicial y final
     let usuario = req.params.usuario
     lecturasAEnviar = [];
-    var ppmProm = 0;
-    var adcProm = 0;
-    var voltajeProm = 0;
-    var mgm3Prom = 0;
-    var estadoProm = 0;
-
     const equiposPorUsuario = await Equipo.find({ usuario: usuario });//Realiza la búsqueda de usuario en Equipo
     await Lectura.find({ "hora": { "$gte": req.params.fechaInicial, "$lt": req.params.fechaFinal } }, (err, lectura) => {//Realiza la búsqueda en el campo hora de Lectura de acuerdo a fecha inicial
         //y final
@@ -50,43 +44,11 @@ router.get('/:usuario/:fechaInicial/:fechaFinal', middleware.ensureAuthenticated
                 }
             });
         });
+        res.json(lecturasAEnviar)//Se envía en la respuesta el array lecturasAEnviar en formato JSON
 
-        lecturasAEnviar.forEach(function (item) {
-            ppmProm += item.ppm;
-            adcProm += item.adc;
-            voltajeProm += item.voltaje;
-            mgm3Prom += item.mgm3;
-            estadoProm += item.estado;
-        });
-
-        var arrayD = lecturasAEnviar.length;
-        var prom = [
-            {
-                magnitud: "ppm",
-                promedio: ppmProm / arrayD
-            },
-            {
-                magnitud: "adc",
-                promedio: adcProm / arrayD
-            },
-            {
-                magnitud: "voltaje",
-                promedio: voltajeProm / arrayD
-            },
-            {
-                magnitud: "mgm3",
-                promedio: mgm3Prom / arrayD
-            },
-            {
-                magnitud: "estado",
-                promedio: estadoProm / arrayD
-            }
-        ]
-
-        res.json(prom)//Se envía en la respuesta el array lecturasAEnviar en formato JSON
     });
 });
-*/
+
 router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//Se define una nueva ruta para el método GET usando el parámetro equipo, adc, ppm, estado, volatje y mgm3
     //Sirve para poder guardar la lectura correspondiente al envío de datos desde el equipo transmisor
     const lectura = new Lectura();//Se crea una nueva Lectura
