@@ -152,7 +152,7 @@ async function EnviarNotificacionPorTipo(equipo, usuario, nombre, valor, tipo) {
         return res.json({ mesaje: "Error no se encontro usuario" })
 
 
-    const cliente = await Cliente.findOne({ codigo: usr.cliente });//Se busca el cliente de acuerdo al usuario afectado 																																								//y nombre del parámetro (adc, ppm, estado, voltaje o mgm3)
+    const cliente = await Cliente.findOne({ identificacion: usr.cliente });//Se busca el cliente de acuerdo al usuario afectado 																																								//y nombre del parámetro (adc, ppm, estado, voltaje o mgm3)
     console.log(usr)
 
     console.log(cliente)
