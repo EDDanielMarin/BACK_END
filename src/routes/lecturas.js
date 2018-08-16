@@ -26,7 +26,7 @@ router.get('/:codigo', middleware.ensureAuthenticated, async (req, res) => {//Se
         res.json(lectura)
     })
 });
-
+/*
 router.get('/:usuario/:fechaInicial/:fechaFinal', middleware.ensureAuthenticated, async (req, res) => {//Se define una nueva ruta para el método GET usando el parámetro usuario,
     //fecha inicial y final
     let usuario = req.params.usuario
@@ -86,7 +86,7 @@ router.get('/:usuario/:fechaInicial/:fechaFinal', middleware.ensureAuthenticated
         res.json(prom)//Se envía en la respuesta el array lecturasAEnviar en formato JSON
     });
 });
-
+*/
 router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//Se define una nueva ruta para el método GET usando el parámetro equipo, adc, ppm, estado, volatje y mgm3
     //Sirve para poder guardar la lectura correspondiente al envío de datos desde el equipo transmisor
     const lectura = new Lectura();//Se crea una nueva Lectura
@@ -97,7 +97,10 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
     lectura.estado = req.params.estado;
     lectura.voltaje = req.params.voltaje;
     lectura.mgm3 = req.params.mgm3;
-
+    if (lectura.estado < 1)
+        return res.json({
+            status: 'Lectura Omitida'
+        })
     const lecturas = await Lectura.find();//Se realiza la búsqueda de todas las lecturas
     var num = 0;
     if (lecturas.length > 0) {
@@ -117,6 +120,7 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
     lectura.hora = new Date();//En el campo hora de la nueva lectura se asigna la fecha actual
 
     //Se guarda la nueva lectura
+
     await lectura.save();
 
     res.json({
