@@ -11,6 +11,7 @@ const Notificacion = require('../models/notificacionModel');
 const NotificacionUsuario = require('../models/notificacionUsuarioModel');
 const Cliente = require('../models/clienteModel');
 const Equipo = require('../models/equipoModel');
+const Usuario = require('../models/usuarioModel');
 
 router.get('/', middleware.ensureAuthenticated, async (req, res) => {
     const lecturas = await Lectura.find();
@@ -146,7 +147,11 @@ async function EnvioNotificaciones(equipo, usuario, nombre, valorDeEntrada) {//S
 
 async function EnviarNotificacionPorTipo(equipo, usuario, nombre, valor, tipo) {
 
-    const cliente = await Cliente.findOne({ codigo: usuario });//Se busca el cliente de acuerdo al usuario afectado 																																								//y nombre del parámetro (adc, ppm, estado, voltaje o mgm3)
+    const usr = await Usuario.findOne({ codigo: usuario })
+    if (!usr)
+        return res.json({ mesaje: "Error no se encontro usuario" })
+
+    const cliente = await Cliente.findOne({ codigo: usr.cliente });//Se busca el cliente de acuerdo al usuario afectado 																																								//y nombre del parámetro (adc, ppm, estado, voltaje o mgm3)
 
     const equipoAfectado = await Equipo.findOne({ codigo: equipo });//Se busca el equipo afectado
 

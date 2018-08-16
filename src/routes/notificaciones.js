@@ -3,14 +3,25 @@ const router = express.Router();
 var middleware = require('../middleware');
 
 const Notificacion = require('../models/notificacionModel');
+const NotificacionUsuario = require('../models/notificacionUsuarioModel');
 
 router.get('/',middleware.ensureAuthenticated, async (req, res) =>{
     const notificaciones = await Notificacion.find();
     res.json(notificaciones);
 });
 
-router.get('/:codigo',middleware.ensureAuthenticated, async (req, res) =>{
-    let codigo = req.params.codigo
+router.get('/:usuario',middleware.ensureAuthenticated, async (req, res) =>{
+    /*
+    let usuario = req.params.usuario
+    await NotificacionUsuario.findOne({ usuario: usuario}, (err, notificaciones) => {
+        if (err) return res.status(500).send({ message: 'error al realizar la petición' })
+        if (!notificacionUsuario) return res.status(404).send({ mesagge: ' la notificacionUsuario no existe' })
+        
+        res.json(notificacionUsuario)
+    }) 
+    */
+    
+    let codigo = req.params.usuario
     await Notificacion.findOne( {codigo:codigo}, (err, notificacion) => {
         if(err) return res.status(500).send({ message: 'error al realizar la petición'})
         if(!notificacion) return res.status(404).send({ mesagge :' la notificación no exite'})
