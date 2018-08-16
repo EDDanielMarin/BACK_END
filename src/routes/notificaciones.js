@@ -16,7 +16,7 @@ router.get('/:usuario',middleware.ensureAuthenticated, async (req, res) =>{
     let notificacionesp=[]
     await NotificacionUsuario.findOne({ usuario: usuario}, (err, notificaciones) => {
         if (err) return res.status(500).send({ message: 'error al realizar la petición' })
-        if (!notificacionUsuario) return res.status(404).send({ mesagge: ' la notificacionUsuario no existe' })
+        if (!notificaciones) return res.status(404).send({ mesagge: ' la notificacionUsuario no existe' })
         notificaciones.forEach(x => {
             Notificacion.findOne( {codigo:x.notificacion}, (err, notificaciontmp) => {
                 notificacionesp.push(notificaciontmp)
