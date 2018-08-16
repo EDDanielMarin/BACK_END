@@ -21,7 +21,7 @@ router.get('/:usuario',middleware.ensureAuthenticated, async (req, res) =>{
             Notificacion.findOne( {codigo:x.notificacion}, (err, notificaciontmp) => {
                 notificacionesp.push(notificaciontmp)
             })
-            res.json(notificacionUsuario)
+            res.json(notificacionesp)
         });
     }) 
     
