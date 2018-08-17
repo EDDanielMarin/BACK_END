@@ -31,9 +31,11 @@ router.get('/:codigo', middleware.ensureAuthenticated, async (req, res) => {//Se
 router.get('/:usuario/:fechaInicial/:fechaFinal', middleware.ensureAuthenticated, async (req, res) => {//Se define una nueva ruta para el método GET usando el parámetro usuario,
     //fecha inicial y final
     let usuario = req.params.usuario
+    let fechaini = new Date(req.params.fechaInicial).toISOString();
+    let fechafin = new Date(req.params.fechaFinal).toISOString();
     lecturasAEnviar = [];
     const equiposPorUsuario = await Equipo.find({ usuario: usuario });//Realiza la búsqueda de usuario en Equipo
-    await Lectura.find({ "hora": { "$gte": req.params.fechaInicial, "$lt": req.params.fechaFinal } }, (err, lectura) => {//Realiza la búsqueda en el campo hora de Lectura de acuerdo a fecha inicial
+    await Lectura.find({ "hora": { "$gte": fechaini, "$lt": fechafin } }, (err, lectura) => {//Realiza la búsqueda en el campo hora de Lectura de acuerdo a fecha inicial
         //y final
         if (err) return res.status(500).send({ message: 'error al realizar la petición' })
         if (!lectura) return res.status(404).send({ mesagge: ' las lecturas no exiten' })
