@@ -6,6 +6,10 @@ const Notificacion = new Schema({
         type:Number,
         required: 'Es necesario el código'
     },
+    usuario:{
+        type: Number,
+        required:"usuario requerido"
+    },
     tipo: {
         type: Number,
         required:'Es necesario el número del tipo'

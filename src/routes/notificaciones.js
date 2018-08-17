@@ -10,14 +10,15 @@ router.get('/',middleware.ensureAuthenticated, async (req, res) =>{
     res.json(notificaciones);
 });
 
-router.get('/:usuario',middleware.ensureAuthenticated, async (req, res) =>{
+/*router.get('/:usuario',middleware.ensureAuthenticated, async (req, res) =>{
     
     let usuario = req.params.usuario
-    let notificacionesp=[]
-     await NotificacionUsuario.findOne({ usuario: usuario}, (err, notificaciones) => {
+    notificacionesp = []
+    await NotificacionUsuario.find({ usuario: usuario}, (err, notificaciones) => {
         if (err) return res.status(500).send({ message: 'error al realizar la petición' })
         if (!notificaciones) return res.status(404).send({ mesagge: ' la notificacionUsuario no existe' })
-         notificaciones.forEach(x => {
+         //notificaciones.forEach(function (x) {
+        Array.prototype.forEach.call(notificaciones,function (x){
             Notificacion.findOne( {codigo:x.notificacion}, (err1, notificaciontmp) => {
                 if(err1) 
                     return res.status(500).send({ message: 'error al realizar la petición' })
@@ -25,11 +26,26 @@ router.get('/:usuario',middleware.ensureAuthenticated, async (req, res) =>{
                     notificacionesp.push(notificaciontmp)
             })
         });
-        res.json(notificacionesp)
+        
 
     }) 
     
+    res.json(notificacionesp)
+   
+});*/
+
+router.get('/:usuario',middleware.ensureAuthenticated, async (req, res) =>{
     
+    let usuario = req.params.usuario
+    notificacionesp = []
+    await Notificacion.find({ usuario: usuario}, (err, notificaciones) => {
+        if (err) return res.status(500).send({ message: 'error al realizar la petición' })
+        if (!notificaciones) return res.status(404).send({ mesagge: ' la notificacionUsuario no existe' })
+        res.json(notificaciones)
+
+    }) 
+    
+    res.json(notificacionesp)
    
 });
 
@@ -64,6 +80,13 @@ router.post('/',middleware.ensureAuthenticated, async (req, res) => {
 router.delete('/',middleware.ensureAuthenticated, async (req, res) => {
     console.log(req.query);
    await Notificacion.findByIdAndRemove(req.query);
+   res.json({
+    status:'Notificación eliminada'
+   });
+});
+
+router.delete('/BorrarTodo',middleware.ensureAuthenticated, async (req, res) => {
+   await Notificacion.deleteMany({});
    res.json({
     status:'Notificación eliminada'
    });

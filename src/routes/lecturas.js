@@ -55,6 +55,7 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
     const lectura = new Lectura();//Se crea una nueva Lectura
     const equipoUsuario = await Equipo.findOne({ codigo: req.params.equipo });//Se realiza la búsqueda del equipo
     lectura.equipo = req.params.equipo; //Se almacenan en los campos correspondientes de lectura los parámetros correspondientes enviados en la petición
+    lectura.sensor = req.params.equipo;
     lectura.adc = req.params.adc;
     lectura.ppm = req.params.ppm;
     lectura.estado = req.params.estado;
@@ -174,6 +175,7 @@ async function EnviarNotificacionPorTipo(equipo, usuario, nombre, valor, tipo) {
         notificacion.asunto = "Emergencia! Valor alto en " + nombre;
     }
 
+    notificacion.usuario = usuario;
     notificacion.descripcion = "Se presentó el valor: " + valor + " en " + nombre + " en el equipo con ip: " + equipoAfectado.ip;
     notificacion.codigo = num + 1
     notificacion.hora = new Date();
