@@ -63,10 +63,11 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
     lectura.estado = req.params.estado;
     lectura.voltaje = req.params.voltaje;
     lectura.mgm3 = req.params.mgm3;
-    if (lectura.estado < 1)
+   /* if (lectura.estado < 1)
         return res.json({
             status: 'Lectura Omitida'
         })
+        */
     const lecturas = await Lectura.find();//Se realiza la búsqueda de todas las lecturas
     var num = 0;
     if (lecturas.length > 0) {
@@ -86,8 +87,8 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
     lectura.hora = new Date();//En el campo hora de la nueva lectura se asigna la fecha actual
 
     //Se guarda la nueva lectura
-
-    await lectura.save();
+    if(lectura.estado>=1)
+         await lectura.save();
 
     res.json({
         status: 'Lectura Guardada'
