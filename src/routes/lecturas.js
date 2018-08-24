@@ -56,42 +56,51 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
     //Sirve para poder guardar la lectura correspondiente al envío de datos desde el equipo transmisor
     const lectura = new Lectura();//Se crea una nueva Lectura
     const equipoUsuario = await Equipo.findOne({ codigo: req.params.equipo });//Se realiza la búsqueda del equipo
-    lectura.equipo = req.params.equipo; //Se almacenan en los campos correspondientes de lectura los parámetros correspondientes enviados en la petición
-    lectura.sensor = req.params.equipo;
-    lectura.adc = req.params.adc;
-    lectura.ppm = req.params.ppm;
-    lectura.estado = req.params.estado;
-    lectura.voltaje = req.params.voltaje;
-    lectura.mgm3 = req.params.mgm3;
-    if (lectura.estado < 1)
-        return res.json({
-            status: 'Lectura Omitida'
-        })
-    const lecturas = await Lectura.find();//Se realiza la búsqueda de todas las lecturas
-    var num = 0;
-    if (lecturas.length > 0) {
-        if (lecturas[lecturas.length - 1])
-            num = lecturas[lecturas.length - 1].codigo//Se obtiene el código del último elemento del array lecturas
+
+    if (equipoUsuario.estado == 1) {
+        lectura.equipo = req.params.equipo; //Se almacenan en los campos correspondientes de lectura los parámetros correspondientes enviados en la petición
+        lectura.sensor = req.params.equipo;
+        lectura.adc = req.params.adc;
+        lectura.ppm = req.params.ppm;
+        lectura.estado = req.params.estado;
+        lectura.voltaje = req.params.voltaje;
+        lectura.mgm3 = req.params.mgm3;
+        if (lectura.estado < 1)
+            return res.json({
+                status: 'Lectura Omitida'
+            })
+        const lecturas = await Lectura.find();//Se realiza la búsqueda de todas las lecturas
+        var num = 0;
+        if (lecturas.length > 0) {
+            if (lecturas[lecturas.length - 1])
+                num = lecturas[lecturas.length - 1].codigo//Se obtiene el código del último elemento del array lecturas
+        }
+
+        //Comprobación de valores altos
+        //await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "adc", req.params.adc);
+        await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "ppm", req.params.ppm);
+        //await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "estado", req.params.estado);
+        //await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "voltaje", req.params.voltaje);
+        await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "mgm3", req.params.mgm3);
+
+
+        lectura.codigo = num + 1//En el campo código de la nueva lectura se asigna el valor de num + 1
+        lectura.hora = new Date();//En el campo hora de la nueva lectura se asigna la fecha actual
+
+        //Se guarda la nueva lectura
+
+        await lectura.save();
+
+        res.json({
+            status: 'Lectura Guardada'
+        });
+    }else{
+        res.json({
+            status: 'Estado invalido'
+        });
     }
 
-    //Comprobación de valores altos
-    //await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "adc", req.params.adc);
-    await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "ppm", req.params.ppm);
-    //await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "estado", req.params.estado);
-    //await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "voltaje", req.params.voltaje);
-    await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "mgm3", req.params.mgm3);
 
-
-    lectura.codigo = num + 1//En el campo código de la nueva lectura se asigna el valor de num + 1
-    lectura.hora = new Date();//En el campo hora de la nueva lectura se asigna la fecha actual
-
-    //Se guarda la nueva lectura
-
-    await lectura.save();
-
-    res.json({
-        status: 'Lectura Guardada'
-    });
 });
 
 router.post('/', middleware.ensureAuthenticated, async (req, res) => {
