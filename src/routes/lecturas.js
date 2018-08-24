@@ -83,21 +83,18 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
         //await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "voltaje", req.params.voltaje);
         await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "mgm3", req.params.mgm3);
 
-
-    //Se guarda la nueva lectura
-    if(lectura.estado>=1)
-         await lectura.save();
         lectura.codigo = num + 1//En el campo código de la nueva lectura se asigna el valor de num + 1
         lectura.hora = new Date();//En el campo hora de la nueva lectura se asigna la fecha actual
 
         //Se guarda la nueva lectura
+        if (lectura.estado >= 1)
+            await lectura.save();
 
-        await lectura.save();
 
         res.json({
             status: 'Lectura Guardada'
         });
-    }else{
+    } else {
         res.json({
             status: 'Estado invalido'
         });
