@@ -138,7 +138,7 @@ async function EnvioNotificaciones(equipo, usuario, nombre, valorDeEntrada) {//S
             await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 2);
         } 
     } else { // Si se trata de una parámetro de alarma
-        if ((nuevoArray[0].valor < valorDeEntrada) && (nuevoArray[1].valor > valorDeEntrada)) {
+        if (nuevoArray[1].valor > valorDeEntrada) {
             await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 1);
         } 
     }
