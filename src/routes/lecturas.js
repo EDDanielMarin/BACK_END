@@ -57,7 +57,7 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
     const lectura = new Lectura();//Se crea una nueva Lectura
     const equipoUsuario = await Equipo.findOne({ codigo: req.params.equipo });//Se realiza la búsqueda del equipo
 
-    if (equipoUsuario.estado == 1) {
+    if (equipoUsuario.estado == 1) { // Si el estado del equipo es activo
         lectura.equipo = req.params.equipo; //Se almacenan en los campos correspondientes de lectura los parámetros correspondientes enviados en la petición
         lectura.sensor = req.params.equipo;
         lectura.adc = req.params.adc;
@@ -65,7 +65,7 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
         lectura.estado = req.params.estado;
         lectura.voltaje = req.params.voltaje;
         lectura.mgm3 = req.params.mgm3;
-        if (lectura.estado < 1)
+        if (lectura.estado < 1) // Cuando no se detecta CO, se omite la lectura
             return res.json({
                 status: 'Lectura Omitida'
             })
@@ -77,19 +77,15 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
         }
 
         //Comprobación de valores altos
-        //await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "adc", req.params.adc);
         await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "ppm", req.params.ppm);
-        //await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "estado", req.params.estado);
-        //await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "voltaje", req.params.voltaje);
         await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "mgm3", req.params.mgm3);
 
         lectura.codigo = num + 1//En el campo código de la nueva lectura se asigna el valor de num + 1
         lectura.hora = new Date();//En el campo hora de la nueva lectura se asigna la fecha actual
 
-        //Se guarda la nueva lectura
+        //Se guarda la nueva lectura únicamente cuando se detecta CO
         if (lectura.estado >= 1)
             await lectura.save();
-
 
         res.json({
             status: 'Lectura Guardada'
@@ -99,8 +95,6 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
             status: 'Estado invalido'
         });
     }
-
-
 });
 
 router.post('/', middleware.ensureAuthenticated, async (req, res) => {
@@ -123,38 +117,31 @@ router.delete('/', middleware.ensureAuthenticated, async (req, res) => {
 
 async function EnvioNotificaciones(equipo, usuario, nombre, valorDeEntrada) {//Se define la función EnvioNotificaciones
 
+    const parametrosEncontrados = await ParametroConfig.find({ usuario: usuario });//Se busca los parámetros de configuración de la notificación de acuerdo al usuario
 
-    const parametrosEncontrados = await ParametroConfig.find({ usuario: usuario });//Se busca el parámetro de configuración de la notificación de acuerdo al usuario
+    nuevoArray = []; // Se define un arreglo
 
-    nuevoArray = [];
-
-    parametrosEncontrados.forEach(function (item) {
-        var arrayTipo = item.nombre.split("_");
-        console.log(nombre + " == " + arrayTipo[0])
-        if (arrayTipo[0] === nombre) {
-            nuevoArray.push(item);
+    parametrosEncontrados.forEach(function (item) { // Se recorre el arreglo de los parámetros encontrados
+        var arrayTipo = item.nombre.split("_"); // En arrayTipo se obtiene el tipo de parámetro (mgm3 o ppm)
+        console.log(nombre + " == " + arrayTipo[0]) // Se imprime por consola el tipo de parámetro
+        if (arrayTipo[0] === nombre) { //Si el tipo de parámetro de configuración coincide con el nombre del parámetro
+            nuevoArray.push(item); // En nuevo array se añade el parámetro de configuración
         }
     });
 
-    console.log(JSON.stringify(nuevoArray));
-    console.log(nombre);
-    console.log(valorDeEntrada);
-    var arrayTipoAUX = nuevoArray[0].nombre.split("_");
-    if (arrayTipoAUX[1] === "e") {
-        if (nuevoArray[0].valor < valorDeEntrada) {
-            await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 2);
-        } else if (nuevoArray[1].valor < valorDeEntrada) {
-            await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 1);
-        }
-    } else {
+    console.log(JSON.stringify(nuevoArray)); // Se imprime por consola el nuevo array
+    console.log(nombre); // Se imprime por consola el nombre del parámetro
+    console.log(valorDeEntrada); // Se imprime por consola el valor de la lectura
+    var arrayTipoAUX = nuevoArray.nombre.split("_"); // Se obtiene el tipo de parámetro (mgm3 o ppm)
+    if (arrayTipoAUX[1] === "e") { // Si se trata de una parámetro de emergencia
         if (nuevoArray[1].valor < valorDeEntrada) {
             await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 2);
-        } else if (nuevoArray[0].valor < valorDeEntrada) {
-            console.log("1")
+        } 
+    } else { // Si se trata de una parámetro de alarma
+        if ((nuevoArray[0].valor < valorDeEntrada) && (nuevoArray[1].valor > valorDeEntrada)) {
             await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 1);
-        }
+        } 
     }
-
 }
 
 async function EnviarNotificacionPorTipo(equipo, usuario, nombre, valor, tipo) {
