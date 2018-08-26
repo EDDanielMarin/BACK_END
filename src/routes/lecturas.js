@@ -132,12 +132,14 @@ async function EnvioNotificaciones(equipo, usuario, nombre, valorDeEntrada) {//S
     console.log(JSON.stringify(nuevoArray)); // Se imprime por consola el nuevo array
     console.log(nombre); // Se imprime por consola el nombre del parámetro
     console.log(valorDeEntrada); // Se imprime por consola el valor de la lectura
-    var arrayTipoAUX = nuevoArray.nombre.split("_"); // Se obtiene el tipo de parámetro (mgm3 o ppm)
-    if (arrayTipoAUX[1] === "e") { // Si se trata de una parámetro de emergencia
+    var arrayTipoAUX = nuevoArray[0].nombre.split("_"); // Se obtiene el tipo de parámetro (mgm3 o ppm)
+    var arrayTipoAUXe = nuevoArray[1].nombre.split("_"); // Se obtiene el tipo de parámetro (mgm3 o ppm)
+    if (arrayTipoAUXe[1] === "e") { // Si se trata de una parámetro de emergencia
         if (nuevoArray[1].valor < valorDeEntrada) {
             await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 2);
         } 
-    } else { // Si se trata de una parámetro de alarma
+    } 
+    if (arrayTipoAUX[1] === "a") { // Si se trata de una parámetro de alarma
         if (nuevoArray[1].valor > valorDeEntrada) {
             await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 1);
         } 
