@@ -81,8 +81,19 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
         await EnvioNotificaciones(req.params.equipo, equipoUsuario.usuario, "mgm3", req.params.mgm3);
 
         lectura.codigo = num + 1//En el campo código de la nueva lectura se asigna el valor de num + 1
-        lectura.hora = new Date();//En el campo hora de la nueva lectura se asigna la fecha actual
-        console.log(lectura.hora);
+        const Fecha = new Date();
+        A = Fecha.getFullYear().toString();
+        M = Fecha.getMonth().toString();
+        D = Fecha.getDay().toString();
+        h = Fecha.getHours();
+        m = Fecha.getMinutes().toString();
+        s = Fecha.getSeconds().toString();
+        ms = Fecha.getMilliseconds().toString();
+        hn = (h - 5).toString();
+        FQuito = A+"-"+M+"-"+D+"T"+hn+"-"+m+"-"+s;
+		console.log(FQuito); 
+        lectura.hora = FQuito;//En el campo hora de la nueva lectura se asigna la fecha actual
+        
         //Se guarda la nueva lectura únicamente cuando se detecta CO
         if (lectura.estado >= 1)
             await lectura.save();
