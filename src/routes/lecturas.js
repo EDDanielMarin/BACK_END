@@ -82,16 +82,13 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
 
         lectura.codigo = num + 1//En el campo código de la nueva lectura se asigna el valor de num + 1
         const Fecha = new Date();
-        p = Fecha.setHours(h);
         A = Fecha.getFullYear().toString();
-        M = Fecha.getMonth();
-        mes = (M+1).toString();
+        M = (Fecha.getMonth()+1).toString();
         D = Fecha.getDate().toString();
-        h = Fecha.getHours();
-        p = Fecha.setHours(h);
+        h = Fecha.getHours().toString();
         m = Fecha.getMinutes().toString();
         s = Fecha.getSeconds().toString();
-        FQuito = A+"-"+mes+"-"+D+" "+h+":"+m+":"+s;//Ya esta bien hay que ver lo de los digitos para el mes
+        FQuito = A+"-"+M+"-"+D+" "+h+":"+m+":"+s;//Ya esta bien hay que ver lo de los digitos para el mes
         console.log(Fecha);
         console.log(Fquito); 
         lectura.hora = FQuito;//En el campo hora de la nueva lectura se asigna la fecha actual
