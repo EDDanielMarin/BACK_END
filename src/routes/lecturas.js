@@ -133,34 +133,29 @@ async function EnvioNotificaciones(equipo, usuario, nombre, valorDeEntrada) {//S
     console.log(nombre); // Se imprime por consola el nombre del parámetro
     console.log(valorDeEntrada); // Se imprime por consola el valor de la lectura
     var arrayTipoAUX = nuevoArray[0].nombre.split("_"); // Se obtiene el tipo de parámetro (mgm3 o ppm)
-    console.log(JSON.stringify(nuevoArray[0]));
-    console.log(JSON.stringify(nuevoArray[1]));
-    console.log(JSON.stringify(arrayTipoAUX[0]));
-    console.log(JSON.stringify(arrayTipoAUX[1]));
-    if (arrayTipoAUX[1] === "e") { // Si se trata de una parámetro de emergencia
-        if (nuevoArray[0].valor < valorDeEntrada) {
+    if (arrayTipoAUX[1] === "e") { // Si se trata del parámetro mgm3
+        if (nuevoArray[0].valor < valorDeEntrada) { // Si el valor de entrada es mayor al parámetro de emergencia
             await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 2);
-        } else if (nuevoArray[1].valor < valorDeEntrada) {
+        } else if (nuevoArray[1].valor < valorDeEntrada) { // Si el valor de entrada es mayor al parámetro de alerta
             await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 1);
         }
-    } else { // Si se trata de una parámetro de alarma
-        if (nuevoArray[1].valor < valorDeEntrada) {
+    } else { // Si se trata del parámetro ppm
+        if (nuevoArray[1].valor < valorDeEntrada) { // Si el valor de entrada es mayor al parámetro de emergencia
             await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 2);
-        } else if (nuevoArray[0].valor < valorDeEntrada) {
+        } else if (nuevoArray[0].valor < valorDeEntrada) { // Si el valor de entrada es mayor al parámetro de alerta
             console.log("1")
             await EnviarNotificacionPorTipo(equipo, usuario, nombre, valorDeEntrada, 1);
         }
     }
 }
 
-async function EnviarNotificacionPorTipo(equipo, usuario, nombre, valor, tipo) {
+async function EnviarNotificacionPorTipo(equipo, usuario, nombre, valor, tipo) { //Se define la función EnviarNotificacionPorTipo
 
-    const usr = await Usuario.findOne({ codigo: usuario })
+    const usr = await Usuario.findOne({ codigo: usuario }) //Realiza la búsqueda del usuario
     if (!usr)
         return res.json({ mesaje: "Error no se encontro usuario" })
 
-
-    const cliente = await Cliente.findOne({ identificacion: usr.cliente });//Se busca el cliente de acuerdo al usuario afectado 																																								//y nombre del parámetro (adc, ppm, estado, voltaje o mgm3)
+    const cliente = await Cliente.findOne({ identificacion: usr.cliente });//Se busca el cliente de acuerdo a la identificación 																																						
     console.log(usr)
 
     console.log(cliente)
@@ -176,14 +171,15 @@ async function EnviarNotificacionPorTipo(equipo, usuario, nombre, valor, tipo) {
     const notificacion = new Notificacion();//Se crea una nueva notificación y se asignan los valores correspondientes
     notificacion.tipo = tipo;
     notificacion.medio = 1;
-    if (tipo === 1) {
+    if (tipo === 1) { // Se define el asunto de la notificación de acuerdo al tipo
         notificacion.asunto = "Alarma de valor alto en " + nombre;
     } else {
         notificacion.asunto = "Emergencia! Valor alto en " + nombre;
     }
 
+    // Se definen el resto de campos de la nueva notificación
     notificacion.usuario = usuario;
-    notificacion.descripcion = "Se presentó el valor: " + valor + " en " + nombre + " en el equipo con ip: " + equipoAfectado.ip;
+    notificacion.descripcion = "Se presentó el valor: " + valor + " en " + nombre;
     notificacion.codigo = num + 1
     notificacion.hora = new Date();
     await notificacion.save();//se guarda la notificación
