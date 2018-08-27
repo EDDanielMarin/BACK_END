@@ -82,7 +82,7 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
 
         lectura.codigo = num + 1//En el campo código de la nueva lectura se asigna el valor de num + 1
         lectura.hora = new Date.now();//En el campo hora de la nueva lectura se asigna la fecha actual
-
+        console.log(lectura.hora);
         //Se guarda la nueva lectura únicamente cuando se detecta CO
         if (lectura.estado >= 1)
             await lectura.save();
