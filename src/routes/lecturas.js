@@ -91,7 +91,7 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
         ms = Fecha.getMilliseconds().toString();
         hn = (h - 5).toString();
         FQuito = A+"-"+M+"-"+D+"T"+hn+"-"+m+"-"+s;
-		console.log(M); 
+		console.log(Fecha); 
         lectura.hora = FQuito;//En el campo hora de la nueva lectura se asigna la fecha actual
         
         //Se guarda la nueva lectura únicamente cuando se detecta CO
