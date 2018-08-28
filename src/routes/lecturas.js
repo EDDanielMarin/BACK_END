@@ -197,6 +197,7 @@ async function EnviarNotificacionPorTipo(equipo, usuario, nombre, valor, tipo) {
     m = Fecha.getMinutes().toString();
     s = Fecha.getSeconds().toString();
     FQuito = new Date (A+"-"+M+"-"+D+" "+h+":"+m+":"+s);
+    console.log(Fecha);
     console.log(FQuito);
     notificacion.hora = FQuito;
 
