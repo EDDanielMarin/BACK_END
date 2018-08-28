@@ -88,9 +88,7 @@ router.get('/:equipo/:adc/:ppm/:estado/:voltaje/:mgm3', async (req, res) => {//S
         h = Fecha.getHours().toString();
         m = Fecha.getMinutes().toString();
         s = Fecha.getSeconds().toString();
-        FQuito = A+"-"+M+"-"+D+" "+h+":"+m+":"+s;//Ya esta bien hay que ver lo de los digitos para el mes
-        console.log(Fecha);
-        console.log(FQuito); 
+        FQuito = A+"-"+M+"-"+D+" "+h+":"+m+":"+s;
         lectura.hora = FQuito;//En el campo hora de la nueva lectura se asigna la fecha actual
         
         //Se guarda la nueva lectura únicamente cuando se detecta CO
@@ -191,7 +189,17 @@ async function EnviarNotificacionPorTipo(equipo, usuario, nombre, valor, tipo) {
     notificacion.usuario = usuario;
     notificacion.descripcion = "Se presentó el valor: " + valor + " en " + nombre;
     notificacion.codigo = num + 1
-    notificacion.hora = new Date();
+    const Fecha = new Date();
+    A = Fecha.getFullYear().toString();
+    M = (Fecha.getMonth()+1).toString();
+    D = Fecha.getDate().toString();
+    h = Fecha.getHours().toString();
+    m = Fecha.getMinutes().toString();
+    s = Fecha.getSeconds().toString();
+    FQuito = new Date (A+"-"+M+"-"+D+" "+h+":"+m+":"+s);
+    console.log(FQuito);
+    notificacion.hora = FQuito;
+
     await notificacion.save();//se guarda la notificación
 
     var transporter = nodemailer.createTransport({//Se crea el servicio de transporte necesario para poder enviar correos electrónicos
