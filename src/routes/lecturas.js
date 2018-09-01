@@ -188,13 +188,13 @@ async function EnviarNotificacionPorTipo(equipo, usuario, nombre, valor, tipo) {
     var transporter = nodemailer.createTransport({//Se crea el servicio de transporte necesario para poder enviar correos electrónicos
         service: 'gmail',//Se especifica el uso de gmail
         auth: {//Se define el objeto de autenticación especificando la cuenta y contraseña de gmail
-            user: 'raspberry.ard@gmail.com',
+            user: 'raspberry.tfm2018@gmail.com',
             pass: 'proyectoNode'
         }
     });
 
     var mailOptions = {//Se especifican los detalles del correo a enviar como emisor, receptor, asunto y texto
-        from: 'raspberry.ard@gmail.com',
+        from: 'raspberry.tfm2018@gmail.com',
         to: cliente.correo,
         subject: notificacion.asunto,
         text: notificacion.descripcion
